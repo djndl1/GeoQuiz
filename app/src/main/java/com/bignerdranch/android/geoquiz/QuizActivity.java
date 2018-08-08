@@ -4,12 +4,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class QuizActivity extends AppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mNextButton;
+    private TextView mQuestionTextView;
+
+    //Intialize questions
+    private Question[] mQuestionBank = new Question[] {
+            new Question(R.string.question_africa, false),
+            new Question(R.string.question_americas, true),
+            new Question(R.string.question_asia, true),
+            new Question(R.string.question_australia, true),
+            new Question(R.string.question_mideast, false),
+            new Question(R.string.question_oceans, true),
+    };
+
+    private int mCurrentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,9 +36,7 @@ public class QuizActivity extends AppCompatActivity {
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this,
-                        R.string.correct_toast,
-                        Toast.LENGTH_SHORT).show();
+                checkAnswer(true);
             }
         });
 
@@ -31,12 +44,46 @@ public class QuizActivity extends AppCompatActivity {
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this,
-                        R.string.false_toast,
-                        Toast.LENGTH_SHORT).show();
+                checkAnswer(false);
+            }
+        });
+
+        //Question Text
+        mQuestionTextView = (TextView) findViewById(R.id.Question_text_view);
+        updateQuestion();
+
+        //NextButton set listener
+        mNextButton = (Button) findViewById(R.id.next_button);
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                updateQuestion();
             }
         });
 
 
+
+
+    }
+
+    // Question updated in a circle
+    private void updateQuestion() {
+        int question = mQuestionBank[mCurrentIndex].getTextResId();
+        mQuestionTextView.setText(question);
+    }
+
+    //Check if the user presses the correct button
+    private void checkAnswer(boolean userPressedTrue) {
+        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+
+        int MessageResId;
+
+        if (answerIsTrue == userPressedTrue)
+            MessageResId = R.string.correct_toast;
+        else
+            MessageResId = R.string.false_toast;
+
+        Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT).show();
     }
 }
