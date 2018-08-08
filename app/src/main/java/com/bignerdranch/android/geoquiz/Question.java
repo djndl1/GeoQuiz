@@ -18,6 +18,7 @@ public class Question {
         mTextResId = textResId;
     }
 
+
     public void setAnswerTrue(boolean answerTrue) {
         mAnswerTrue = answerTrue;
     }
