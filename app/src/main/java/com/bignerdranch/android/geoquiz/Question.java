@@ -8,10 +8,21 @@ public class Question {
 
     private int mTextResId; // Question text
     private boolean mAnswerTrue; //the answer to the question
+    private boolean mAnswered;
+
+    public void setAnswered(boolean answered) {
+        mAnswered = answered;
+    }
+
+    public boolean isAnswered() {
+
+        return mAnswered;
+    }
 
     public Question(int TextResId, boolean AnswerTrue){
         mTextResId = TextResId;
         mAnswerTrue = AnswerTrue;
+        mAnswered = false;
     }
 
     public void setTextResId(int textResId) {

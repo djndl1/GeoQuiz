@@ -2,6 +2,7 @@ package com.bignerdranch.android.geoquiz;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,6 +17,12 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mPrevButton;
     private TextView mQuestionTextView;
 
+    private static final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+
+
+    private int rightAnswers = 0;
+    private boolean AllAnswered = false;
 
     //Intialize questions
     private Question[] mQuestionBank = new Question[] {
@@ -29,10 +36,17 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate called");
         setContentView(R.layout.activity_quiz);
+
+        if (savedInstanceState != null)
+        {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+        }
 
         //TrueButton and FalseButton added and Listeners set
         mTrueButton = (Button) findViewById(R.id.true_button);
@@ -40,6 +54,8 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
+                disableAnswerButtons();
+
             }
         });
 
@@ -48,6 +64,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
+                disableAnswerButtons();
             }
         });
 
@@ -57,6 +74,7 @@ public class QuizActivity extends AppCompatActivity {
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG,"Updating Question", new Exception());
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
             }
@@ -69,7 +87,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
-            }
+                }
         });
 
         //PrevButton set listener
@@ -84,9 +102,61 @@ public class QuizActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG,"OnStart called");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"onResume called");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop called");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG, "onPause called");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+    }
     // Question updated in a circle
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
+        boolean answered = mQuestionBank[mCurrentIndex].isAnswered();
+
+        AllAnswered = isAllAnswered();
+        if (AllAnswered) {
+            double score = rightAnswers * 100.0 / mQuestionBank.length;
+            Toast.makeText(this,score + "%", Toast.LENGTH_SHORT).show();
+            for (Question q : mQuestionBank) {
+                q.setAnswered(false);
+                rightAnswers = 0;
+            }
+            AllAnswered = false;
+        }
+        if (answered == false)
+            enableAnswerButtons();
+        else
+            disableAnswerButtons();
         mQuestionTextView.setText(question);
     }
 
@@ -96,11 +166,36 @@ public class QuizActivity extends AppCompatActivity {
 
         int MessageResId;
 
-        if (answerIsTrue == userPressedTrue)
+        mQuestionBank[mCurrentIndex].setAnswered(true);
+        if (answerIsTrue == userPressedTrue) {
             MessageResId = R.string.correct_toast;
-        else
+            rightAnswers ++;
+        }
+        else {
             MessageResId = R.string.false_toast;
+        }
 
         Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isAllAnswered() {
+        for (Question q : mQuestionBank)
+        {
+            if (q.isAnswered()==false)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void disableAnswerButtons() {
+        mTrueButton.setEnabled(false);
+        mFalseButton.setEnabled(false);
+    }
+
+    private void enableAnswerButtons() {
+            mTrueButton.setEnabled(true);
+            mFalseButton.setEnabled(true);
     }
 }
