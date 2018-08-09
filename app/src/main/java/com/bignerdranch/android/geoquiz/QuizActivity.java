@@ -1,5 +1,6 @@
 package com.bignerdranch.android.geoquiz;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +17,7 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mNextButton;
     private ImageButton mPrevButton;
     private TextView mQuestionTextView;
+    private TextView mSDKVer;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -24,7 +26,7 @@ public class QuizActivity extends AppCompatActivity {
     private int rightAnswers = 0;
     private boolean AllAnswered = false;
 
-    //Intialize questions
+    //Initialize questions
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_africa, false),
             new Question(R.string.question_americas, true),
@@ -100,6 +102,8 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+        mSDKVer = (TextView) findViewById(R.id.API_ver_text);
+        mSDKVer.setText("API Level " + Build.VERSION.SDK_INT);
     }
 
     @Override

@@ -54,4 +54,12 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/API_ver_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:layout_weight="1"
+        android:text="TextView"
+        android:textSize="15dp"/>
 </FrameLayout>
