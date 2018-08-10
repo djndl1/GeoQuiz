@@ -220,6 +220,7 @@ public class QuizActivity extends AppCompatActivity {
         Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT).show();
     }
 
+    // Checking if all questions have been answered
     private boolean isAllAnswered() {
         for (Question q : mQuestionBank)
         {
