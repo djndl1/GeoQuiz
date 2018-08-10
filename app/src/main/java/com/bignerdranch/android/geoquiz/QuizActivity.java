@@ -24,10 +24,11 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-    private static final String BUTTON_STATE = "ButtonState";
+    private static final int REQUEST_CODE_CHEAT = 0;
 
     private int rightAnswers = 0;
     private boolean AllAnswered = false;
+    private boolean mIsCheater;
 
     //Initialize questions
     private Question[] mQuestionBank = new Question[] {
@@ -92,6 +93,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
+                mIsCheater = false;
                 }
         });
 
@@ -102,6 +104,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + mQuestionBank.length - 1) % mQuestionBank.length;
                 updateQuestion();
+                mIsCheater = false;
             }
         });
 
@@ -112,12 +115,25 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean answer = mQuestionBank[mCurrentIndex].isAnswerTrue();
                 Intent intent = CheatActivity.newIntent(QuizActivity.this, answer);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
 
         mSDKVer = (TextView) findViewById(R.id.API_ver_text);
         mSDKVer.setText("API Level " + Build.VERSION.SDK_INT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            if (data == null)
+                return;
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
     }
 
     @Override
@@ -186,12 +202,16 @@ public class QuizActivity extends AppCompatActivity {
         int MessageResId;
 
         mQuestionBank[mCurrentIndex].setAnswered(true);
-        if (answerIsTrue == userPressedTrue) {
-            MessageResId = R.string.correct_toast;
-            rightAnswers ++;
-        }
-        else {
-            MessageResId = R.string.false_toast;
+
+        if (mIsCheater) {
+            MessageResId = R.string.judgment_toast;
+        } else {
+                if (answerIsTrue == userPressedTrue) {
+                    MessageResId = R.string.correct_toast;
+                    rightAnswers++;
+                } else {
+                    MessageResId = R.string.false_toast;
+                }
         }
 
         Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT).show();
