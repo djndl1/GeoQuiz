@@ -21,7 +21,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-
+    private static final String BUTTON_STATE = "ButtonState";
 
     private int rightAnswers = 0;
     private boolean AllAnswered = false;
@@ -72,7 +72,7 @@ public class QuizActivity extends AppCompatActivity {
 
         //Question Text
         mQuestionTextView = (TextView) findViewById(R.id.Question_text_view);
-        updateQuestion();
+        mQuestionTextView.setText(mQuestionBank[mCurrentIndex].getTextResId());
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,6 +102,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+
         mSDKVer = (TextView) findViewById(R.id.API_ver_text);
         mSDKVer.setText("API Level " + Build.VERSION.SDK_INT);
     }
@@ -129,6 +130,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.put
     }
 
     @Override
@@ -142,6 +144,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy called");
     }
+
     // Question updated in a circle
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
@@ -157,7 +160,7 @@ public class QuizActivity extends AppCompatActivity {
             }
             AllAnswered = false;
         }
-        if (answered == false)
+        if (!answered)
             enableAnswerButtons();
         else
             disableAnswerButtons();
@@ -199,7 +202,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void enableAnswerButtons() {
-            mTrueButton.setEnabled(true);
-            mFalseButton.setEnabled(true);
+        mTrueButton.setEnabled(true);
+        mFalseButton.setEnabled(true);
     }
 }
