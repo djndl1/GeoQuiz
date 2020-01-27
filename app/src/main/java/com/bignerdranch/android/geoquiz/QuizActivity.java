@@ -3,13 +3,14 @@ package com.bignerdranch.android.geoquiz;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class QuizActivity extends AppCompatActivity {
 
@@ -56,45 +57,33 @@ public class QuizActivity extends AppCompatActivity {
 
         //TrueButton and FalseButton added and Listeners set
         mTrueButton = (Button) findViewById(R.id.true_button);
-        mTrueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(true);
-                disableAnswerButtons();
-            }
+        mTrueButton.setOnClickListener( (View v) -> {
+            checkAnswer(true);
+            disableAnswerButtons();
         });
 
         mFalseButton = (Button) findViewById(R.id.false_button);
-        mFalseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(false);
-                disableAnswerButtons();
-            }
+        mFalseButton.setOnClickListener( (View v) -> {
+            checkAnswer(false);
+            disableAnswerButtons();
         });
 
         //Question Text
         mQuestionTextView = (TextView) findViewById(R.id.Question_text_view);
         mQuestionTextView.setText(mQuestionBank[mCurrentIndex].getTextResId());
-        mQuestionTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG,"Updating Question", new Exception());
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                updateQuestion();
-                mIsCheater = false; //Cheating state removed when proceeding to another question
-            }
+        mQuestionTextView.setOnClickListener( (View v) -> {
+            Log.d(TAG,"Updating Question", new Exception());
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+            updateQuestion();
+            mIsCheater = false; //Cheating state removed when proceeding to another question
         });
 
         //NextButton set listener
         mNextButton = (ImageButton) findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                updateQuestion();
-                mIsCheater = false; //Cheating state removed when proceeding to another question
-                }
+        mNextButton.setOnClickListener( (View v) -> {
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+            updateQuestion();
+            mIsCheater = false; //Cheating state removed when proceeding to another question
         });
 
         //PrevButton set listener
@@ -110,13 +99,10 @@ public class QuizActivity extends AppCompatActivity {
 
         //CheatButton set listener to start CheatActivity
         mCheatButton = (Button) findViewById(R.id.cheat_button);
-        mCheatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean answer = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                Intent intent = CheatActivity.newIntent(QuizActivity.this, answer);
-                startActivityForResult(intent, REQUEST_CODE_CHEAT); // seeking to know if the player has cheated
-            }
+        mCheatButton.setOnClickListener( (View v) -> {
+            boolean answer = mQuestionBank[mCurrentIndex].isAnswerTrue();
+            Intent intent = CheatActivity.newIntent(QuizActivity.this, answer);
+            startActivityForResult(intent, REQUEST_CODE_CHEAT); // seeking to know if the player has cheated
         });
 
         //Displaying the SDK version
