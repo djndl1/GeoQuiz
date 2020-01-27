@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -57,13 +58,13 @@ public class QuizActivity extends AppCompatActivity {
 
         //TrueButton and FalseButton added and Listeners set
         mTrueButton = (Button) findViewById(R.id.true_button);
-        mTrueButton.setOnClickListener( (View v) -> {
+        mTrueButton.setOnClickListener((View v) -> {
             checkAnswer(true);
             disableAnswerButtons();
         });
 
         mFalseButton = (Button) findViewById(R.id.false_button);
-        mFalseButton.setOnClickListener( (View v) -> {
+        mFalseButton.setOnClickListener((View v) -> {
             checkAnswer(false);
             disableAnswerButtons();
         });
@@ -71,7 +72,7 @@ public class QuizActivity extends AppCompatActivity {
         //Question Text
         mQuestionTextView = (TextView) findViewById(R.id.Question_text_view);
         mQuestionTextView.setText(mQuestionBank[mCurrentIndex].getTextResId());
-        mQuestionTextView.setOnClickListener( (View v) -> {
+        mQuestionTextView.setOnClickListener((View v) -> {
             Log.d(TAG,"Updating Question", new Exception());
             mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
             updateQuestion();
@@ -80,7 +81,7 @@ public class QuizActivity extends AppCompatActivity {
 
         //NextButton set listener
         mNextButton = (ImageButton) findViewById(R.id.next_button);
-        mNextButton.setOnClickListener( (View v) -> {
+        mNextButton.setOnClickListener((View v) -> {
             mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
             updateQuestion();
             mIsCheater = false; //Cheating state removed when proceeding to another question
@@ -88,18 +89,15 @@ public class QuizActivity extends AppCompatActivity {
 
         //PrevButton set listener
         mPrevButton = (ImageButton) findViewById(R.id.prev_button);
-        mPrevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + mQuestionBank.length - 1) % mQuestionBank.length;
-                updateQuestion();
-                mIsCheater = false; //Cheating state removed when proceeding to another question
-            }
+        mPrevButton.setOnClickListener((View v) -> {
+            mCurrentIndex = (mCurrentIndex + mQuestionBank.length - 1) % mQuestionBank.length;
+            updateQuestion();
+            mIsCheater = false; //Cheating state removed when proceeding to another question
         });
 
         //CheatButton set listener to start CheatActivity
         mCheatButton = (Button) findViewById(R.id.cheat_button);
-        mCheatButton.setOnClickListener( (View v) -> {
+        mCheatButton.setOnClickListener((View v) -> {
             boolean answer = mQuestionBank[mCurrentIndex].isAnswerTrue();
             Intent intent = CheatActivity.newIntent(QuizActivity.this, answer);
             startActivityForResult(intent, REQUEST_CODE_CHEAT); // seeking to know if the player has cheated
@@ -202,8 +200,9 @@ public class QuizActivity extends AppCompatActivity {
                     MessageResId = R.string.false_toast;
                 }
         }
-
-        Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT).show();
+        Toast answerToast = Toast.makeText(this, MessageResId, Toast.LENGTH_SHORT);
+        answerToast.setGravity(Gravity.TOP, 0, 0);
+        answerToast.show();
     }
 
     // Checking if all questions have been answered
